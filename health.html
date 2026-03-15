@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Health Report 2024 — Full Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #0a0c10;
+  --bg2:    #111318;
+  --bg3:    #181c24;
+  --border: rgba(255,255,255,.07);
+  --text:   #e8eaf0;
+  --muted:  #7880a0;
+  --red:    #ff4560;
+  --orange: #ff9f43;
+  --yellow: #ffd166;
+  --green:  #06d6a0;
+  --blue:   #4cc9f0;
+  --violet: #9b5de5;
+  --pink:   #f72585;
+  --teal:   #4ecdc4;
+  --lime:   #a8e063;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(76,201,240,.3); border-radius: 4px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,12,16,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: .9rem;
+  letter-spacing: .06em;
+  color: var(--blue);
+}
+
+.nav-links {
+  display: flex; gap: 4px; list-style: none;
+}
+
+.nav-links a {
+  display: block; padding: 5px 12px;
+  font-size: .75rem; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  border-radius: 4px; letter-spacing: .04em;
+  transition: all .15s;
+}
+
+.nav-links a:hover { background: rgba(255,255,255,.06); color: var(--text); }
+.nav-links a.active { background: rgba(76,201,240,.12); color: var(--blue); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 80px 32px 60px;
+  position: relative; overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 30%, rgba(76,201,240,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(155,93,229,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 10%, rgba(255,69,96,.06) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem; letter-spacing: .2em;
+  color: var(--blue); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; flex: 1; max-width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue));
+}
+.hero-eyebrow::after { background: linear-gradient(90deg, var(--blue), transparent); }
+
+h1.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin-bottom: 20px;
+}
+
+.hero-title .line1 { color: var(--text); }
+.hero-title .line2 {
+  background: linear-gradient(90deg, var(--blue), var(--violet), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  max-width: 600px;
+  font-size: 1rem; color: var(--muted);
+  margin-bottom: 48px; line-height: 1.7;
+}
+
+/* hero stat pills */
+.hero-stats {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 48px;
+}
+
+.hstat {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.03);
+  text-align: center;
+}
+
+.hstat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem; font-weight: 700;
+  display: block; margin-bottom: 2px;
+}
+
+.hstat-l {
+  font-size: .68rem; color: var(--muted);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+.scroll-cue {
+  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); animation: bounce 2s ease infinite;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.scroll-cue::after { content: '↓'; font-size: 1.2rem; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+/* ── SECTIONS ── */
+section {
+  padding: 80px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.section-label::before {
+  content: ''; width: 24px; height: 1px;
+  background: var(--blue);
+}
+
+h2.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 700; letter-spacing: -.02em;
+  margin-bottom: 8px; color: var(--text);
+}
+
+.section-sub {
+  font-size: .9rem; color: var(--muted);
+  margin-bottom: 40px; max-width: 640px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px; max-width: 1280px; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* ── GRID LAYOUTS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.grid-32 { display: grid; grid-template-columns: 3fr 2fr; gap: 20px; }
+.grid-23 { display: grid; grid-template-columns: 2fr 3fr; gap: 20px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative; overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--card-accent, linear-gradient(90deg, var(--blue), var(--violet)));
+}
+
+.card-label {
+  font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card-value {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 700; line-height: 1;
+  color: var(--text); margin-bottom: 4px;
+}
+
+.card-value.colored { color: var(--card-color, var(--blue)); }
+
+.card-desc {
+  font-size: .78rem; color: var(--muted); line-height: 1.5;
+  margin-top: 6px;
+}
+
+.card-change {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .72rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 4px; margin-top: 8px;
+}
+
+.card-change.up { background: rgba(255,69,96,.12); color: var(--red); }
+.card-change.down { background: rgba(6,214,160,.12); color: var(--green); }
+
+/* ── CHART CONTAINERS ── */
+.chart-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+}
+
+.chart-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chart-card .chart-sub {
+  font-size: .72rem; color: var(--muted); margin-bottom: 20px;
+}
+
+.chart-wrap {
+  position: relative;
+  height: 260px;
+}
+
+.chart-wrap.tall { height: 320px; }
+.chart-wrap.short { height: 200px; }
+
+/* ── STAT TABLE ── */
+.stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+
+.stat-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stat-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.stat-table tr:hover td { background: rgba(255,255,255,.025); }
+.stat-table td:first-child { color: var(--text); font-weight: 500; }
+.stat-table td:not(:first-child) { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: .78rem; }
+
+.flag { font-size: 1.1rem; margin-right: 6px; }
+
+/* bar inside table */
+.bar-cell { display: flex; align-items: center; gap: 10px; }
+.bar-bg { flex: 1; height: 5px; background: rgba(255,255,255,.06); border-radius: 3px; max-width: 120px; }
+.bar-fill { height: 100%; border-radius: 3px; background: var(--bar-color, var(--blue)); }
+
+/* ── HIGHLIGHT BOX ── */
+.highlight-box {
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 20px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+
+.highlight-box.info { border-color: rgba(76,201,240,.25); background: rgba(76,201,240,.05); }
+.highlight-box.warn { border-color: rgba(255,159,67,.25); background: rgba(255,159,67,.05); }
+.highlight-box.danger { border-color: rgba(255,69,96,.25); background: rgba(255,69,96,.05); }
+.highlight-box.success { border-color: rgba(6,214,160,.25); background: rgba(6,214,160,.05); }
+
+.highlight-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+.highlight-box p { font-size: .84rem; line-height: 1.65; color: var(--muted); }
+.highlight-box p strong { color: var(--text); font-weight: 600; }
+
+/* ── PROGRESS BARS ── */
+.progress-list { display: flex; flex-direction: column; gap: 14px; }
+
+.progress-item { }
+.progress-head { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: .8rem; }
+.progress-name { color: var(--text); font-weight: 500; }
+.progress-val { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: .75rem; }
+.progress-track { height: 6px; background: rgba(255,255,255,.06); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+/* ── RISK MATRIX ── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.risk-cell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 8px;
+  font-size: .62rem; font-weight: 600;
+  cursor: default;
+  transition: transform .15s;
+  border: 1px solid rgba(255,255,255,.04);
+}
+
+.risk-cell:hover { transform: scale(1.06); }
+.risk-cell .rc-val { font-family: 'Syne', sans-serif; font-size: .85rem; margin-bottom: 2px; }
+
+/* severity colours */
+.sev-1 { background: rgba(6,214,160,.1); color: var(--green); }
+.sev-2 { background: rgba(168,224,99,.1); color: var(--lime); }
+.sev-3 { background: rgba(255,209,102,.1); color: var(--yellow); }
+.sev-4 { background: rgba(255,159,67,.1); color: var(--orange); }
+.sev-5 { background: rgba(255,69,96,.1); color: var(--red); }
+
+/* ── TIMELINE ── */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item {
+  display: flex; gap: 20px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute; left: 19px; top: 32px; bottom: 0; width: 1px;
+  background: var(--border);
+}
+
+.tl-item:last-child::before { display: none; }
+
+.tl-dot {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg3); border: 2px solid var(--dot-color, var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; color: var(--dot-color, var(--blue)); font-weight: 700;
+  z-index: 1;
+}
+
+.tl-content { flex: 1; padding-top: 6px; }
+.tl-content h4 { font-size: .88rem; font-weight: 600; margin-bottom: 3px; }
+.tl-content p { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.tl-year { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--muted); margin-bottom: 3px; }
+
+/* ── GREECE SPECIAL ── */
+.greece-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 32px;
+}
+
+.greece-flag {
+  font-size: 2.8rem; line-height: 1;
+}
+
+.greece-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700; letter-spacing: -.02em;
+}
+
+.greece-header p { font-size: .84rem; color: var(--muted); }
+
+/* ── SOURCE BADGE ── */
+.source-row {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 40px;
+}
+
+.source-badge {
+  padding: 4px 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: .62rem; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .04em;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 40px 32px;
+  text-align: center;
+  font-size: .75rem; color: var(--muted);
+  line-height: 2;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-32, .grid-23 { grid-template-columns: 1fr; }
+  nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  section { padding: 56px 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">GLOBAL HEALTH REPORT 2024</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#cardiovascular">Cardio</a></li>
+    <li><a href="#dementia">Dementia</a></li>
+    <li><a href="#cancer">Cancer</a></li>
+    <li><a href="#mental">Mental</a></li>
+    <li><a href="#obesity">Obesity</a></li>
+    <li><a href="#hospitals">Hospitals</a></li>
+    <li><a href="#greece">Greece</a></li>
+    <li><a href="#europe">Europe</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">WHO · GBD · OECD · Eurostat · 2024</div>
+  <h1 class="hero-title">
+    <span class="line1">The State of Human Health</span><br>
+    <span class="line2">Full Global Analysis</span>
+  </h1>
+  <p class="hero-desc">A comprehensive statistical examination of disease burden, hospital systems, mortality, and health expenditure — from Athens to Beijing, from dementia wards to cardiac units.</p>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <span class="hstat-n" style="color:var(--red);">9.1M</span>
+      <span class="hstat-l">Deaths from heart disease / year</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-n" style="color:var(--violet);">55M</span>
+      <span class="hstat-l">People living with dementia</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-n" style="color:var(--orange);">800M+</span>
+      <span class="hstat-l">Adults with diabetes</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-n" style="color:var(--green);">$13.3T</span>
+      <span class="hstat-l">Global hospital market 2024</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-n" style="color:var(--blue);">970M</span>
+      <span class="hstat-l">People with mental disorders</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue">Scroll to explore</div>
+</div>
+
+
+<!-- ═══════ SECTION 1: OVERVIEW ═══════ -->
+<div class="divider"></div>
+<section id="overview">
+  <div class="section-label">Section 01 — Global Overview</div>
+  <h2 class="section-title">Top Causes of Death Worldwide</h2>
+  <p class="section-sub">In 2021, 7 of the top 10 global killers were non-communicable diseases. Cardiovascular disease and stroke together claim more lives than any other cause. Source: WHO Global Health Estimates 2024.</p>
+
+  <div class="grid-32" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <h3>Top 10 Global Causes of Death (2021)</h3>
+      <p class="chart-sub">Millions of deaths per year — WHO data</p>
+      <div class="chart-wrap tall">
+        <canvas id="topCauses"></canvas>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card" style="--card-accent:linear-gradient(90deg,var(--red),var(--orange));">
+        <div class="card-label">World's #1 Killer</div>
+        <div class="card-value colored" style="--card-color:var(--red);">9.1M</div>
+        <div class="card-desc">Deaths from ischaemic heart disease in 2021 — a rise of 2.7M since 2000. Responsible for 13% of all global deaths.</div>
+        <div class="card-change up">↑ +42% since 2000</div>
+      </div>
+      <div class="card" style="--card-accent:linear-gradient(90deg,var(--violet),var(--pink));">
+        <div class="card-label">Alzheimer's / Dementia</div>
+        <div class="card-value colored" style="--card-color:var(--violet);">1.8M</div>
+        <div class="card-desc">Deaths in 2021. Now the 7th leading global cause of death. Nearly 4× more deaths than in 2000. Women account for 68% of these deaths.</div>
+        <div class="card-change up">↑ +300% since 2000</div>
+      </div>
+      <div class="card" style="--card-accent:linear-gradient(90deg,var(--yellow),var(--lime));">
+        <div class="card-label">Diabetes</div>
+        <div class="card-value colored" style="--card-color:var(--yellow);">2.0M</div>
+        <div class="card-desc">Deaths in 2021. Entered the global top 10 with a 95% increase since 2000. Over 800 million people now live with diabetes worldwide.</div>
+        <div class="card-change up">↑ +95% since 2000</div>
+      </div>
+      <div class="card" style="--card-accent:linear-gradient(90deg,var(--green),var(--teal));">
+        <div class="card-label">HIV/AIDS — Progress</div>
+        <div class="card-value colored" style="--card-color:var(--green);">—61%</div>
+        <div class="card-desc">HIV deaths fell 61% since 2000. Now ranked 21st globally, down from 7th. The greatest success story in modern global health.</div>
+        <div class="card-change down">↓ Dropped out of Top 10</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="highlight-box danger">
+      <span class="highlight-icon">🫀</span>
+      <p><strong>Cardiovascular + stroke</strong> together kill over 15 million people per year — more than cancer, diabetes, and respiratory disease combined. They account for roughly 32% of all global deaths.</p>
+    </div>
+    <div class="highlight-box warn">
+      <span class="highlight-icon">🧠</span>
+      <p><strong>Alzheimer's and other dementias</strong> are now the 4th leading cause of death in high-income countries and are on track to overtake stroke as one of the top three within this decade.</p>
+    </div>
+    <div class="highlight-box info">
+      <span class="highlight-icon">📊</span>
+      <p><strong>Non-communicable diseases</strong> now account for 38% of all deaths globally (68% within the top 10). The global epidemiological transition is essentially complete in high-income nations.</p>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Global Burden of Disease: DALYs by Category</h3>
+    <p class="chart-sub">Disability-Adjusted Life Years lost — one DALY = one year of healthy life lost. GBD 2021 data.</p>
+    <div class="chart-wrap">
+      <canvas id="dalyChart"></canvas>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 2: CARDIOVASCULAR ═══════ -->
+<div class="divider"></div>
+<section id="cardiovascular">
+  <div class="section-label">Section 02 — Cardiovascular Disease</div>
+  <h2 class="section-title">The World's Biggest Killer</h2>
+  <p class="section-sub">Cardiovascular disease (CVD) remains the leading cause of death globally, responsible for 17.9 million deaths per year. That's one death every 1.8 seconds.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,#ff4560,#ff6b35);">
+      <div class="card-label">Annual Global Deaths</div>
+      <div class="card-value colored" style="--card-color:var(--red);">17.9M</div>
+      <div class="card-desc">Per year from cardiovascular causes — 32% of all global deaths</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#ff9f43,#ffd166);">
+      <div class="card-label">Hypertension Globally</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">1.28B</div>
+      <div class="card-desc">Adults living with hypertension — the #1 modifiable risk factor for CVD</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#4cc9f0,#4361ee);">
+      <div class="card-label">Premature Deaths</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">38%</div>
+      <div class="card-desc">Of CVD deaths occur in people under 70 — preventable in most cases</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#06d6a0,#a8e063);">
+      <div class="card-label">Economic Cost (EU)</div>
+      <div class="card-value colored" style="--card-color:var(--green);">€282B</div>
+      <div class="card-desc">Annual economic burden of CVD in the European Union alone</div>
+    </div>
+  </div>
+
+  <div class="grid-23" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>CVD Deaths by Region</h3>
+      <p class="chart-sub">Millions of deaths per year — 2021</p>
+      <div class="chart-wrap">
+        <canvas id="cvdRegion"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>CVD Death Rate Trend</h3>
+      <p class="chart-sub">Age-standardised rate per 100,000 — Global vs Europe</p>
+      <div class="chart-wrap">
+        <canvas id="cvdTrend"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>CVD Risk Factor Prevalence — Selected Countries</h3>
+      <p class="chart-sub">% of adult population — WHO / national health surveys</p>
+      <div style="overflow-x:auto;">
+        <table class="stat-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Hypertension</th>
+              <th>High Cholesterol</th>
+              <th>Diabetes</th>
+              <th>Obesity</th>
+              <th>Smoking</th>
+              <th>CVD Deaths / 100k</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="flag">🇷🇺</span>Russia</td><td>49%</td><td>58%</td><td>9%</td><td>27%</td><td>30%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:95%;--bar-color:var(--red)"></span></span>890</span></td></tr>
+            <tr><td><span class="flag">🇺🇦</span>Ukraine</td><td>46%</td><td>55%</td><td>8%</td><td>24%</td><td>28%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:90%;--bar-color:var(--red)"></span></span>843</span></td></tr>
+            <tr><td><span class="flag">🇷🇴</span>Romania</td><td>44%</td><td>50%</td><td>10%</td><td>25%</td><td>26%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:80%;--bar-color:var(--orange)"></span></span>710</span></td></tr>
+            <tr><td><span class="flag">🇬🇷</span>Greece</td><td>42%</td><td>54%</td><td>11%</td><td>25%</td><td>27%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:65%;--bar-color:var(--orange)"></span></span>580</span></td></tr>
+            <tr><td><span class="flag">🇩🇪</span>Germany</td><td>35%</td><td>44%</td><td>9%</td><td>24%</td><td>22%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:40%;--bar-color:var(--yellow)"></span></span>360</span></td></tr>
+            <tr><td><span class="flag">🇬🇧</span>UK</td><td>31%</td><td>42%</td><td>8%</td><td>28%</td><td>14%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:34%;--bar-color:var(--yellow)"></span></span>300</span></td></tr>
+            <tr><td><span class="flag">🇫🇷</span>France</td><td>29%</td><td>40%</td><td>7%</td><td>22%</td><td>25%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:29%;--bar-color:var(--lime)"></span></span>260</span></td></tr>
+            <tr><td><span class="flag">🇯🇵</span>Japan</td><td>36%</td><td>48%</td><td>10%</td><td>4%</td><td>16%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:26%;--bar-color:var(--lime)"></span></span>230</span></td></tr>
+            <tr><td><span class="flag">🇺🇸</span>USA</td><td>47%</td><td>38%</td><td>11%</td><td>36%</td><td>12%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:37%;--bar-color:var(--yellow)"></span></span>330</span></td></tr>
+            <tr><td><span class="flag">🇨🇳</span>China</td><td>28%</td><td>37%</td><td>12%</td><td>16%</td><td>24%</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:35%;--bar-color:var(--yellow)"></span></span>315</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box danger">
+    <span class="highlight-icon">⚠️</span>
+    <p><strong>Projection alert:</strong> The global burden of cardiovascular disease is expected to surpass 23 million deaths per year by 2030 if current trends continue. Ageing populations, rising diabetes rates, and persistent obesity are the primary drivers. <strong>Low- and middle-income countries now bear 80% of CVD deaths</strong>, despite having far fewer resources to treat them.</p>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 3: DEMENTIA ═══════ -->
+<div class="divider"></div>
+<section id="dementia">
+  <div class="section-label">Section 03 — Dementia & Alzheimer's</div>
+  <h2 class="section-title">The Silent Epidemic of the Ageing World</h2>
+  <p class="section-sub">Over 55 million people globally live with dementia. A new case is diagnosed every 3 seconds. By 2050, this number is projected to reach 139 million — driven primarily by ageing populations in Asia and sub-Saharan Africa.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--violet),var(--pink));">
+      <div class="card-label">Living with Dementia</div>
+      <div class="card-value colored" style="--card-color:var(--violet);">55M</div>
+      <div class="card-desc">Globally in 2023. 10 million new cases every year worldwide.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--pink),var(--red));">
+      <div class="card-label">2050 Projection</div>
+      <div class="card-value colored" style="--card-color:var(--pink);">139M</div>
+      <div class="card-desc">Expected global dementia cases by 2050 — a 153% increase</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--yellow));">
+      <div class="card-label">Global Annual Cost</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">$1.3T</div>
+      <div class="card-desc">Economic cost of dementia in 2019. ~50% from informal caregiving by families.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--teal),var(--blue));">
+      <div class="card-label">Female Burden</div>
+      <div class="card-value colored" style="--card-color:var(--teal);">68%</div>
+      <div class="card-desc">Of all dementia deaths are women. Women also provide 70% of all care hours.</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Dementia Prevalence by Age Group (Global)</h3>
+      <p class="chart-sub">% of population affected — WHO estimates</p>
+      <div class="chart-wrap">
+        <canvas id="dementiaAge"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Projected Cases by Region — 2050 vs 2019</h3>
+      <p class="chart-sub">Millions of cases — GBD forecasts</p>
+      <div class="chart-wrap">
+        <canvas id="dementiaRegion"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:24px;">
+    <h3>Types of Dementia — Global Distribution</h3>
+    <p class="chart-sub">Percentage breakdown of dementia subtypes worldwide</p>
+    <div class="progress-list">
+      <div class="progress-item">
+        <div class="progress-head"><span class="progress-name">Alzheimer's Disease</span><span class="progress-val">60–70%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:65%;background:var(--violet);"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-head"><span class="progress-name">Vascular Dementia</span><span class="progress-val">~15%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:15%;background:var(--blue);"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-head"><span class="progress-name">Lewy Body Dementia</span><span class="progress-val">~5%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:5%;background:var(--teal);"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-head"><span class="progress-name">Frontotemporal Dementia</span><span class="progress-val">~5%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:5%;background:var(--green);"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-head"><span class="progress-name">Mixed / Other</span><span class="progress-val">~15%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:15%;background:var(--muted);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="highlight-box warn">
+      <span class="highlight-icon">📈</span>
+      <p><strong>The steepest regional growth</strong> in dementia is projected in North Africa / Middle East (+367%) and Eastern sub-Saharan Africa (+357%) between 2019–2050 — driven by rapidly ageing populations with little existing care infrastructure.</p>
+    </div>
+    <div class="highlight-box info">
+      <span class="highlight-icon">🔬</span>
+      <p><strong>No cure exists.</strong> Treatments like donepezil and memantine manage symptoms. DALYs from Alzheimer's more than <strong>doubled between 2000 and 2019</strong>. In women, dementia deaths nearly tripled between 2000 and 2021 — the greatest rise of any disease in female mortality.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 4: CANCER ═══════ -->
+<div class="divider"></div>
+<section id="cancer">
+  <div class="section-label">Section 04 — Cancer</div>
+  <h2 class="section-title">Cancer: The Global Burden</h2>
+  <p class="section-sub">Cancer is the second leading cause of death globally. In 2022, there were an estimated 20 million new cases and 9.7 million deaths. One in 5 people will develop cancer in their lifetime.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--red));">
+      <div class="card-label">New Cases / Year (2022)</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">20M</div>
+      <div class="card-desc">New cancer diagnoses globally in 2022 — up from 14M in 2012</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--red),var(--pink));">
+      <div class="card-label">Annual Deaths</div>
+      <div class="card-value colored" style="--card-color:var(--red);">9.7M</div>
+      <div class="card-desc">Cancer deaths per year globally — 1 in 6 of all deaths</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--blue),var(--violet));">
+      <div class="card-label">Living with Cancer</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">53.5M</div>
+      <div class="card-desc">People alive within 5 years of a cancer diagnosis globally (2022)</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--green),var(--teal));">
+      <div class="card-label">2050 Projection</div>
+      <div class="card-value colored" style="--card-color:var(--green);">35M</div>
+      <div class="card-desc">Projected new cases/year by 2050 — a 77% increase from 2022</div>
+    </div>
+  </div>
+
+  <div class="grid-32" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Most Common Cancer Types — Global Incidence (2022)</h3>
+      <p class="chart-sub">New cases in millions</p>
+      <div class="chart-wrap tall">
+        <canvas id="cancerTypes"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Cancer Mortality by Type</h3>
+      <p class="chart-sub">Deaths as % of total cancer deaths</p>
+      <div class="chart-wrap tall">
+        <canvas id="cancerMort"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box danger" style="margin-bottom:24px;">
+    <span class="highlight-icon">🚬</span>
+    <p><strong>Tobacco remains the single largest preventable cause of cancer.</strong> Lung cancer caused by smoking accounts for 1.8M deaths per year. Despite a global decline in smoking rates (from 1 in 3 adults in 2000 to 1 in 5 in 2022), tobacco-attributable deaths are projected to rise to 8.3M/year by 2030 due to population growth in high-smoking countries.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="chart-card">
+      <h3>5-Year Survival Rate by Cancer Type (High-Income Countries)</h3>
+      <p class="chart-sub">% surviving 5 years post-diagnosis</p>
+      <div class="progress-list">
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Thyroid Cancer</span><span class="progress-val">98%</span></div><div class="progress-track"><div class="progress-fill" style="width:98%;background:var(--green);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Breast Cancer</span><span class="progress-val">90%</span></div><div class="progress-track"><div class="progress-fill" style="width:90%;background:var(--teal);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Prostate Cancer</span><span class="progress-val">89%</span></div><div class="progress-track"><div class="progress-fill" style="width:89%;background:var(--blue);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Colorectal Cancer</span><span class="progress-val">65%</span></div><div class="progress-track"><div class="progress-fill" style="width:65%;background:var(--yellow);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Leukaemia</span><span class="progress-val">62%</span></div><div class="progress-track"><div class="progress-fill" style="width:62%;background:var(--orange);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Stomach Cancer</span><span class="progress-val">35%</span></div><div class="progress-track"><div class="progress-fill" style="width:35%;background:var(--red);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Lung Cancer</span><span class="progress-val">22%</span></div><div class="progress-track"><div class="progress-fill" style="width:22%;background:var(--red);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">Pancreatic Cancer</span><span class="progress-val">12%</span></div><div class="progress-track"><div class="progress-fill" style="width:12%;background:var(--pink);"></div></div></div>
+      </div>
+    </div>
+    <div class="chart-card" style="grid-column:span 2;">
+      <h3>Cancer Incidence Rate vs Healthcare Spending</h3>
+      <p class="chart-sub">Age-standardised rate per 100,000 — selected countries (2022, IARC / GLOBOCAN)</p>
+      <div style="overflow-x:auto;">
+        <table class="stat-table">
+          <thead><tr><th>Country</th><th>Incidence / 100k</th><th>Mortality / 100k</th><th>Health Spend (% GDP)</th><th>5-yr Survival</th></tr></thead>
+          <tbody>
+            <tr><td><span class="flag">🇦🇺</span>Australia</td><td>452</td><td>103</td><td>10.7%</td><td>~70%</td></tr>
+            <tr><td><span class="flag">🇩🇰</span>Denmark</td><td>449</td><td>133</td><td>10.5%</td><td>~67%</td></tr>
+            <tr><td><span class="flag">🇺🇸</span>USA</td><td>438</td><td>144</td><td>18.0%</td><td>~67%</td></tr>
+            <tr><td><span class="flag">🇩🇪</span>Germany</td><td>334</td><td>152</td><td>12.8%</td><td>~68%</td></tr>
+            <tr><td><span class="flag">🇬🇧</span>UK</td><td>318</td><td>145</td><td>12.0%</td><td>~60%</td></tr>
+            <tr><td><span class="flag">🇫🇷</span>France</td><td>300</td><td>133</td><td>12.1%</td><td>~63%</td></tr>
+            <tr><td><span class="flag">🇬🇷</span>Greece</td><td>264</td><td>138</td><td>9.7%</td><td>~55%</td></tr>
+            <tr><td><span class="flag">🇨🇳</span>China</td><td>201</td><td>130</td><td>7.0%</td><td>~43%</td></tr>
+            <tr><td><span class="flag">🇮🇳</span>India</td><td>100</td><td>66</td><td>3.5%</td><td>~30%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 5: MENTAL HEALTH ═══════ -->
+<div class="divider"></div>
+<section id="mental">
+  <div class="section-label">Section 05 — Mental Health</div>
+  <h2 class="section-title">970 Million Invisible Patients</h2>
+  <p class="section-sub">1 in 8 people globally lives with a mental disorder. Mental health conditions are the leading cause of non-fatal disease burden worldwide — yet remain chronically underfunded.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,#4cc9f0,#4361ee);">
+      <div class="card-label">Global Prevalence</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">970M</div>
+      <div class="card-desc">People living with a mental disorder — 1 in 8 of the global population</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#9b5de5,#f72585);">
+      <div class="card-label">Depression Cases</div>
+      <div class="card-value colored" style="--card-color:var(--violet);">280M</div>
+      <div class="card-desc">People with depression globally. Women are twice as likely to be diagnosed.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#f72585,#ff4560);">
+      <div class="card-label">Anxiety Disorders</div>
+      <div class="card-value colored" style="--card-color:var(--pink);">301M</div>
+      <div class="card-desc">The world's most prevalent mental health condition — 4% of global population</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,#ff9f43,#ffd166);">
+      <div class="card-label">Economic Cost by 2030</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">$6T</div>
+      <div class="card-desc">Projected global economic burden of mental disorders by 2030 — up from $2.5T in 2010</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Mental Disorder Prevalence by Type</h3>
+      <p class="chart-sub">Global estimates — millions of people</p>
+      <div class="chart-wrap">
+        <canvas id="mentalTypes"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Mental Health Spending as % of Health Budget</h3>
+      <p class="chart-sub">Selected countries — stark global inequality</p>
+      <div class="progress-list" style="margin-top:8px;">
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇬🇧 United Kingdom</span><span class="progress-val">13.9%</span></div><div class="progress-track"><div class="progress-fill" style="width:70%;background:var(--green);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇺🇸 United States</span><span class="progress-val">7.5%</span></div><div class="progress-track"><div class="progress-fill" style="width:38%;background:var(--teal);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇩🇪 Germany</span><span class="progress-val">11.3%</span></div><div class="progress-track"><div class="progress-fill" style="width:57%;background:var(--blue);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇫🇷 France</span><span class="progress-val">10.7%</span></div><div class="progress-track"><div class="progress-fill" style="width:54%;background:var(--blue);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇬🇷 Greece</span><span class="progress-val">5.0%</span></div><div class="progress-track"><div class="progress-fill" style="width:25%;background:var(--yellow);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🇮🇳 India</span><span class="progress-val">1.3%</span></div><div class="progress-track"><div class="progress-fill" style="width:7%;background:var(--orange);"></div></div></div>
+        <div class="progress-item"><div class="progress-head"><span class="progress-name">🌍 Low-income avg</span><span class="progress-val">0.5%</span></div><div class="progress-track"><div class="progress-fill" style="width:2.5%;background:var(--red);"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="highlight-box danger">
+      <span class="highlight-icon">💀</span>
+      <p><strong>Suicide</strong> claims 700,000 lives per year globally. Men account for 75% of suicide deaths. Suicide is the 4th leading cause of death among 15–29 year olds. Depression raises cardiovascular disease risk by 40%.</p>
+    </div>
+    <div class="highlight-box warn">
+      <span class="highlight-icon">👶</span>
+      <p><strong>Youth mental health crisis:</strong> Mental disorder burden among under-24s accelerated sharply after 2019, with DALY rates increasing 6.64% per year. Anxiety and depression have surged across all adolescent populations globally.</p>
+    </div>
+    <div class="highlight-box info">
+      <span class="highlight-icon">💊</span>
+      <p><strong>Treatment gap is enormous.</strong> In low-income countries, more than 75% of people with mental disorders receive no treatment. Even in high-income countries, the treatment gap is 40–50%. Stigma and cost are the primary barriers.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 6: OBESITY & DIABETES ═══════ -->
+<div class="divider"></div>
+<section id="obesity">
+  <div class="section-label">Section 06 — Obesity & Diabetes</div>
+  <h2 class="section-title">The Metabolic Pandemic</h2>
+  <p class="section-sub">1 in 8 people globally is now obese. Over 800 million live with diabetes. Both conditions are rising in every country — and are major drivers of cardiovascular disease, cancer, dementia, and premature death.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--yellow));">
+      <div class="card-label">Adults with Obesity</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">1in8</div>
+      <div class="card-desc">~890 million adults globally obese in 2022 — doubled since 1990</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--yellow),var(--lime));">
+      <div class="card-label">Adults with Diabetes</div>
+      <div class="card-value colored" style="--card-color:var(--yellow);">800M+</div>
+      <div class="card-desc">Surpassed 800 million in 2024 — a 4× increase since 1990</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--red),var(--orange));">
+      <div class="card-label">Obesity-Linked Deaths</div>
+      <div class="card-value colored" style="--card-color:var(--red);">5M+</div>
+      <div class="card-desc">Premature deaths attributable to excess weight per year — 10% of all global deaths</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--violet),var(--blue));">
+      <div class="card-label">Physical Inactivity</div>
+      <div class="card-value colored" style="--card-color:var(--violet);">1.8B</div>
+      <div class="card-desc">Adults at risk from insufficient physical activity — WHO 2024 data</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Obesity Prevalence by Country (2022)</h3>
+      <p class="chart-sub">% of adults (BMI ≥ 30) — WHO</p>
+      <div class="chart-wrap">
+        <canvas id="obesityCountry"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Global Diabetes Growth</h3>
+      <p class="chart-sub">Millions of adults with diabetes — 1980 to 2024</p>
+      <div class="chart-wrap">
+        <canvas id="diabetesTrend"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box warn">
+    <span class="highlight-icon">🍔</span>
+    <p><strong>The shift away from traditional diets</strong> — including the Mediterranean diet in countries like Greece — is driving obesity and diabetes rates upward. Greece's economic crisis accelerated the abandonment of healthier eating patterns. Eastern Europe and Central Asia now see more than 15% of deaths attributed to obesity. <strong>1.8 billion adults worldwide do not get sufficient physical activity.</strong></p>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 7: HOSPITALS & ECONOMICS ═══════ -->
+<div class="divider"></div>
+<section id="hospitals">
+  <div class="section-label">Section 07 — Hospitals & Healthcare Economics</div>
+  <h2 class="section-title">The $13.3 Trillion Industry</h2>
+  <p class="section-sub">Global hospital services generated $13.3 trillion in 2024. The US alone accounts for $5.3 trillion in national health expenditure — 18% of its GDP. Healthcare is the world's largest sector by spending.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--green),var(--teal));">
+      <div class="card-label">Global Hospital Market (2024)</div>
+      <div class="card-value colored" style="--card-color:var(--green);">$13.3T</div>
+      <div class="card-desc">Expected to reach $24.2T by 2034. CAGR of 6.0%. Cardiovascular = 21.5% of all revenue.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--blue),var(--violet));">
+      <div class="card-label">US Health Expenditure (2024)</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">$5.3T</div>
+      <div class="card-desc">$15,474 per person. 18% of US GDP. Hospital spending alone: $1.63 trillion.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--red));">
+      <div class="card-label">North America Share</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">38.5%</div>
+      <div class="card-desc">North America's share of global hospital revenues in 2024 — largest regional market</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--pink),var(--violet));">
+      <div class="card-label">AI Savings by 2026</div>
+      <div class="card-value colored" style="--card-color:var(--pink);">$150B</div>
+      <div class="card-desc">Projected annual healthcare savings from AI integration by 2026</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Health Expenditure as % of GDP (2023)</h3>
+      <p class="chart-sub">OECD / WHO data — selected countries</p>
+      <div class="chart-wrap tall">
+        <canvas id="gdpHealth"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Hospital Services Market by Type</h3>
+      <p class="chart-sub">Revenue share breakdown — 2024</p>
+      <div class="chart-wrap tall">
+        <canvas id="hospitalType"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Hospital Beds per 1,000 Population — Country Comparison</h3>
+      <p class="chart-sub">OECD Health Statistics 2024 — key indicator of healthcare capacity</p>
+      <div style="overflow-x:auto;">
+        <table class="stat-table">
+          <thead><tr><th>Country</th><th>Hospital Beds / 1,000</th><th>Doctors / 1,000</th><th>Nurses / 1,000</th><th>Health Spend / Capita</th><th>Capacity Rating</th></tr></thead>
+          <tbody>
+            <tr><td><span class="flag">🇯🇵</span>Japan</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:95%;--bar-color:var(--green)"></span></span>12.6</span></td><td>2.7</td><td>12.1</td><td>$4,800</td><td style="color:var(--green)">Excellent</td></tr>
+            <tr><td><span class="flag">🇩🇪</span>Germany</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:80%;--bar-color:var(--green)"></span></span>8.0</span></td><td>4.5</td><td>14.0</td><td>$7,900</td><td style="color:var(--green)">Excellent</td></tr>
+            <tr><td><span class="flag">🇰🇷</span>South Korea</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:78%;--bar-color:var(--green)"></span></span>12.4</span></td><td>2.6</td><td>8.7</td><td>$3,800</td><td style="color:var(--teal)">Very Good</td></tr>
+            <tr><td><span class="flag">🇷🇺</span>Russia</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:74%;--bar-color:var(--teal)"></span></span>7.1</span></td><td>3.9</td><td>8.2</td><td>$1,200</td><td style="color:var(--yellow)">Mixed</td></tr>
+            <tr><td><span class="flag">🇫🇷</span>France</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:60%;--bar-color:var(--blue)"></span></span>5.9</span></td><td>3.4</td><td>10.7</td><td>$6,500</td><td style="color:var(--teal)">Very Good</td></tr>
+            <tr><td><span class="flag">🇬🇷</span>Greece</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:55%;--bar-color:var(--blue)"></span></span>4.2</span></td><td>6.1</td><td>3.5</td><td>$2,600</td><td style="color:var(--yellow)">Strained</td></tr>
+            <tr><td><span class="flag">🇬🇧</span>UK</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:26%;--bar-color:var(--orange)"></span></span>2.4</span></td><td>3.2</td><td>9.1</td><td>$5,500</td><td style="color:var(--orange)">Under pressure</td></tr>
+            <tr><td><span class="flag">🇺🇸</span>USA</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:24%;--bar-color:var(--orange)"></span></span>2.8</span></td><td>2.7</td><td>11.4</td><td>$15,474</td><td style="color:var(--yellow)">High cost / low beds</td></tr>
+            <tr><td><span class="flag">🇮🇳</span>India</td><td><span class="bar-cell"><span class="bar-bg"><span class="bar-fill" style="width:8%;--bar-color:var(--red)"></span></span>0.5</span></td><td>0.7</td><td>1.7</td><td>$270</td><td style="color:var(--red)">Critical shortage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="highlight-box success">
+      <span class="highlight-icon">💰</span>
+      <p><strong>Cardiovascular services</strong> generate 21.5% of all global hospital revenue — the single largest segment. This reflects both disease prevalence and the high cost of cardiac procedures, stents, bypass surgeries, and long-term management.</p>
+    </div>
+    <div class="highlight-box info">
+      <span class="highlight-icon">🏥</span>
+      <p><strong>Public vs Private split:</strong> Globally, public/community hospitals held the largest market share (36.6% of beds) in 2024. Inpatient services account for 58% of revenue. Outpatient services are the fastest-growing segment due to telemedicine and day procedures.</p>
+    </div>
+    <div class="highlight-box warn">
+      <span class="highlight-icon">📈</span>
+      <p><strong>China is the fastest-growing hospital market</strong> — expected to reach $818B by 2030. Meanwhile, healthcare spending growth (5.8% CAGR) is consistently outpacing GDP growth (4.3%) in most OECD nations — an unsustainable long-term trend.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 8: GREECE ═══════ -->
+<div class="divider"></div>
+<section id="greece">
+  <div class="greece-header">
+    <span class="greece-flag">🇬🇷</span>
+    <div>
+      <div class="section-label" style="margin-bottom:4px;">Section 08 — Greece in Focus</div>
+      <h2 class="section-title" style="margin-bottom:4px;">Ελλάδα: Health Profile 2024</h2>
+      <p>Population 10.4M · Life expectancy 81.8 years · 283 hospitals · 9.7% of GDP on health</p>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,#0d5eaf,#4cc9f0);">
+      <div class="card-label">Life Expectancy (2024)</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">81.8</div>
+      <div class="card-desc">Women: 84.5 yrs · Men: 79.3 yrs. Gender gap = EU average.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--red),var(--orange));">
+      <div class="card-label">CVD as % of Deaths</div>
+      <div class="card-value colored" style="--card-color:var(--red);">40%</div>
+      <div class="card-desc">CVD is Greece's leading cause of death — above EU average. Ischaemic HD: 11% of all deaths.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--yellow));">
+      <div class="card-label">Overweight / Obese Adults</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">65%</div>
+      <div class="card-desc">5th highest in EU. Men: 70%. Women: 60%. Obesity: ~25% (EU average).</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--violet),var(--pink));">
+      <div class="card-label">Smoking Rate</div>
+      <div class="card-value colored" style="--card-color:var(--violet);">27%</div>
+      <div class="card-desc">Greece has one of the highest smoking rates in the EU — a major driver of CVD and cancer.</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Greece: Causes of Death Breakdown (2022)</h3>
+      <p class="chart-sub">% of all deaths — Eurostat</p>
+      <div class="chart-wrap">
+        <canvas id="greeceCauses"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Greece vs EU Average — Key Health Indicators</h3>
+      <p class="chart-sub">Radar comparison — 2024 data</p>
+      <div class="chart-wrap">
+        <canvas id="greeceRadar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Greece Hospital System at a Glance</h3>
+      <p class="chart-sub">State of Health in the EU — Country Health Profile 2025 (OECD/European Commission)</p>
+      <div class="grid-3" style="margin-top:16px;gap:14px;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Total Hospitals</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--blue);">283</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">55% publicly owned · 45% private</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Public Hospital Beds</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--teal);">~19,800</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">66% of all beds — private: ~10,200</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Health Spend (% GDP)</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--violet);">9.7%</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">Similar to EU average of 9.5%</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Doctors per 1,000</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--green);">6.1</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">Highest in EU — but uneven distribution</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Nurses per 1,000</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--red);">3.5</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">Critically below EU average of 8.8 — major gap</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;">
+          <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Antibiotic Consumption</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--orange);">High</div>
+          <div style="font-size:.74rem;color:var(--muted);margin-top:4px;">24.9 DDD/1,000/day — well above EU avg; AMR risk</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="highlight-box danger">
+      <span class="highlight-icon">🚬</span>
+      <p><strong>Greece's core health challenges:</strong> CVD and cancer account for 65% of all deaths. High smoking rates (27%), widespread obesity (65% overweight), and a shift away from the Mediterranean diet are the primary drivers. Premature CVD mortality under 65 is <strong>significantly above the EU average</strong>.</p>
+    </div>
+    <div class="highlight-box warn">
+      <span class="highlight-icon">💊</span>
+      <p><strong>Healthcare structural gap:</strong> Greece has the highest doctor density in the EU (6.1/1,000) but one of the lowest nurse densities (3.5/1,000 vs EU avg 8.8). The system over-invests in secondary care vs primary care, and rural areas face severe access inequalities.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ SECTION 9: EUROPE ═══════ -->
+<div class="divider"></div>
+<section id="europe">
+  <div class="section-label">Section 09 — European Health Landscape</div>
+  <h2 class="section-title">Europe: Ageing, Spending, Surviving</h2>
+  <p class="section-sub">Europe is home to the world's oldest population. Average health expenditure is 9.5% of GDP across the EU. Eastern and Western Europe diverge sharply on CVD mortality, life expectancy, and healthcare capacity.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="card" style="--card-accent:linear-gradient(90deg,#003399,#4cc9f0);">
+      <div class="card-label">EU Avg. Life Expectancy</div>
+      <div class="card-value colored" style="--card-color:var(--blue);">81.5</div>
+      <div class="card-desc">Years — up from 77.5 in 2000. COVID-19 caused a temporary dip in 2020–21.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--green),var(--teal));">
+      <div class="card-label">EU Health Spending (avg)</div>
+      <div class="card-value colored" style="--card-color:var(--green);">9.5%</div>
+      <div class="card-desc">Of GDP across EU-27. Range: Germany 12.8% to Romania 6.3%.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--orange),var(--red));">
+      <div class="card-label">CVD Deaths (EU)</div>
+      <div class="card-value colored" style="--card-color:var(--orange);">3.9M</div>
+      <div class="card-desc">Per year. Still the leading cause of death, but rates are falling in Western Europe.</div>
+    </div>
+    <div class="card" style="--card-accent:linear-gradient(90deg,var(--violet),var(--pink));">
+      <div class="card-label">Dementia Cases (EU)</div>
+      <div class="card-value colored" style="--card-color:var(--violet);">7.8M</div>
+      <div class="card-desc">Expected to reach 14M by 2050 — Western Europe's fastest-growing health challenge</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="chart-card">
+      <h3>Life Expectancy: East vs West Europe (2022)</h3>
+      <p class="chart-sub">Years — stark divide remains despite convergence</p>
+      <div class="chart-wrap tall">
+        <canvas id="europeLE"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>CVD Mortality Rate — European Countries</h3>
+      <p class="chart-sub">Age-standardised deaths per 100,000 — 2021</p>
+      <div class="chart-wrap tall">
+        <canvas id="europeCVD"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline of key milestones -->
+  <div class="chart-card" style="margin-bottom:24px;">
+    <h3>Key Global Health Milestones</h3>
+    <p class="chart-sub">Major turning points in the modern epidemiological transition</p>
+    <div class="timeline" style="margin-top:20px;">
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--green);">🦠</div>
+        <div class="tl-content">
+          <div class="tl-year">1980s</div>
+          <h4>HIV/AIDS Pandemic Begins</h4>
+          <p>HIV/AIDS emerges as a global health crisis, becoming the 7th leading cause of death by 2000. By 2021, treatment advances brought deaths down 61% — one of medicine's greatest achievements.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--orange);">📈</div>
+        <div class="tl-content">
+          <div class="tl-year">2000</div>
+          <h4>Non-Communicable Disease Era Begins</h4>
+          <p>The WHO Global Health Estimates baseline. Cardiovascular disease already the world's #1 killer. Dementia deaths begin their steep ascent. Diabetes prevalence doubles over the next two decades.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--red);">🫁</div>
+        <div class="tl-content">
+          <div class="tl-year">2019–2021</div>
+          <h4>COVID-19 Reverses Decades of Progress</h4>
+          <p>COVID-19 became the 2nd leading cause of death globally in 2021 (1.2M directly attributed). It reversed life expectancy gains of 5+ years in some countries and disrupted cancer screenings, causing secondary mortality effects still being measured.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--violet);">🧠</div>
+        <div class="tl-content">
+          <div class="tl-year">2021</div>
+          <h4>Dementia Deaths Triple Since 2000</h4>
+          <p>Alzheimer's and dementias responsible for 1.8M deaths — nearly 4× more than in 2000. Now 4th leading cause of death in high-income countries. No cure. Cost: $1.3 trillion annually. By 2050: 139 million affected.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--yellow);">💉</div>
+        <div class="tl-content">
+          <div class="tl-year">2024</div>
+          <h4>Diabetes Surpasses 800 Million</h4>
+          <p>WHO confirms over 800 million adults now live with diabetes — a 4× increase since 1990. Combined with obesity affecting 1 in 8 globally, the metabolic health crisis is accelerating faster than any intervention can counter.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="--dot-color:var(--blue);">🤖</div>
+        <div class="tl-content">
+          <div class="tl-year">2025–2030</div>
+          <h4>AI & Genomics Begin to Transform Care</h4>
+          <p>AI projected to save $150B+ annually in healthcare by 2026. Early cancer detection, personalised medicine, and predictive cardiology are all emerging from research into clinical application — though access remains deeply unequal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-row">
+    <div class="source-badge">WHO Global Health Estimates 2024</div>
+    <div class="source-badge">GBD 2021 / GBD 2023 (IHME)</div>
+    <div class="source-badge">OECD Health at a Glance 2024</div>
+    <div class="source-badge">Eurostat / EU Country Health Profiles 2025</div>
+    <div class="source-badge">GLOBOCAN 2022 (IARC)</div>
+    <div class="source-badge">CMS National Health Expenditure 2024</div>
+    <div class="source-badge">Precedence Research / Grand View Research 2024</div>
+    <div class="source-badge">Lancet / Nature / Frontiers in Public Health (2024)</div>
+    <div class="source-badge">WHO Dementia Observatory</div>
+    <div class="source-badge">FREOPP World Index of Healthcare Innovation 2024</div>
+  </div>
+</section>
+
+<footer>
+  <strong style="color:var(--text);">Global Health Report 2024</strong><br>
+  Data compiled from WHO, IHME Global Burden of Disease, OECD, Eurostat, IARC/GLOBOCAN, CMS, and peer-reviewed sources.<br>
+  All figures represent best available estimates as of 2024. Some data points refer to 2021–2023 due to reporting lags.<br>
+  <span style="font-size:.65rem;opacity:.5;margin-top:8px;display:block;">For research and informational purposes only.</span>
+</footer>
+
+<script>
+/* ═══ CHART DEFAULTS ═══ */
+Chart.defaults.color = '#7880a0';
+Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
+Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+
+const COLORS = {
+  red:'#ff4560', orange:'#ff9f43', yellow:'#ffd166',
+  green:'#06d6a0', blue:'#4cc9f0', violet:'#9b5de5',
+  pink:'#f72585', teal:'#4ecdc4', lime:'#a8e063',
+  muted:'rgba(120,128,160,.4)'
+};
+
+/* ═══ TOP CAUSES CHART ═══ */
+new Chart(document.getElementById('topCauses'), {
+  type:'bar',
+  data:{
+    labels:['Ischaemic Heart Disease','Stroke','COVID-19','COPD','Lower Resp. Infections','Trachea/Bronchus/Lung Cancer','Alzheimer\'s/Dementia','Diabetes Mellitus','Diarrhoeal Diseases','Kidney Disease'],
+    datasets:[{
+      label:'Deaths (millions)',
+      data:[9.1,5.5,3.5,3.3,2.2,2.0,1.8,2.0,1.5,1.3],
+      backgroundColor:[COLORS.red,COLORS.orange,COLORS.pink,COLORS.yellow,COLORS.lime,COLORS.teal,COLORS.violet,COLORS.orange,COLORS.blue,COLORS.green],
+      borderRadius:4, borderSkipped:false
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{display:false}}}
+  }
+});
+
+/* ═══ DALY CHART ═══ */
+new Chart(document.getElementById('dalyChart'), {
+  type:'bar',
+  data:{
+    labels:['2000','2005','2010','2015','2019','2021'],
+    datasets:[
+      {label:'Cardiovascular',data:[300,295,285,275,265,262],backgroundColor:COLORS.red,borderRadius:3},
+      {label:'Mental & Neurological',data:[180,190,205,215,225,230],backgroundColor:COLORS.violet,borderRadius:3},
+      {label:'Cancer',data:[160,168,175,182,188,192],backgroundColor:COLORS.orange,borderRadius:3},
+      {label:'Respiratory',data:[140,135,130,125,120,118],backgroundColor:COLORS.blue,borderRadius:3},
+      {label:'Diabetes',data:[50,60,72,85,100,108],backgroundColor:COLORS.yellow,borderRadius:3},
+      {label:'Alzheimer\'s',data:[30,38,48,60,75,82],backgroundColor:COLORS.pink,borderRadius:3},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:14}}},
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'M DALYs'}}},
+    interaction:{mode:'index'}
+  }
+});
+
+/* ═══ CVD REGION ═══ */
+new Chart(document.getElementById('cvdRegion'), {
+  type:'doughnut',
+  data:{
+    labels:['South Asia','East Asia / Pacific','Europe / Central Asia','Sub-Saharan Africa','Latin America','North America','Middle East / N Africa'],
+    datasets:[{
+      data:[4.8,3.4,3.9,1.8,1.4,0.9,1.2],
+      backgroundColor:[COLORS.red,COLORS.orange,COLORS.blue,COLORS.yellow,COLORS.green,COLORS.violet,COLORS.teal],
+      borderWidth:0, hoverOffset:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}}
+  }
+});
+
+/* ═══ CVD TREND ═══ */
+new Chart(document.getElementById('cvdTrend'), {
+  type:'line',
+  data:{
+    labels:['2000','2005','2010','2015','2019','2021'],
+    datasets:[
+      {label:'Global',data:[340,325,305,288,272,265],borderColor:COLORS.red,backgroundColor:'rgba(255,69,96,.1)',tension:.4,fill:true,borderWidth:2},
+      {label:'Western Europe',data:[260,230,200,178,162,155],borderColor:COLORS.blue,backgroundColor:'rgba(76,201,240,.08)',tension:.4,fill:true,borderWidth:2},
+      {label:'Eastern Europe',data:[680,650,610,560,520,500],borderColor:COLORS.orange,backgroundColor:'rgba(255,159,67,.08)',tension:.4,fill:true,borderWidth:2},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'/100k'}}}
+  }
+});
+
+/* ═══ DEMENTIA AGE ═══ */
+new Chart(document.getElementById('dementiaAge'), {
+  type:'bar',
+  data:{
+    labels:['60–64','65–69','70–74','75–79','80–84','85–89','90+'],
+    datasets:[{
+      label:'% with Dementia',
+      data:[1.0,2.0,4.0,8.0,15.0,25.0,40.0],
+      backgroundColor:[COLORS.lime,COLORS.teal,COLORS.blue,COLORS.violet,COLORS.pink,COLORS.red,COLORS.orange],
+      borderRadius:5
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'%'}}}
+  }
+});
+
+/* ═══ DEMENTIA REGION ═══ */
+new Chart(document.getElementById('dementiaRegion'), {
+  type:'bar',
+  data:{
+    labels:['West Europe','East Europe','North America','Latin America','East Asia','South Asia','N Africa/ME','Sub-Saharan Af.'],
+    datasets:[
+      {label:'2019 (millions)',data:[7.8,3.1,5.6,3.6,8.5,3.1,1.3,0.5],backgroundColor:'rgba(155,93,229,.5)',borderRadius:3},
+      {label:'2050 projected',data:[13.5,5.4,11.0,9.2,18.5,8.3,6.1,2.3],backgroundColor:COLORS.violet,borderRadius:3}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'}}}
+  }
+});
+
+/* ═══ CANCER TYPES ═══ */
+new Chart(document.getElementById('cancerTypes'), {
+  type:'bar',
+  data:{
+    labels:['Lung','Breast','Colorectal','Prostate','Stomach','Liver','Thyroid','Cervical','Bladder','Oesophagus'],
+    datasets:[{
+      label:'New cases (millions)',
+      data:[2.48,2.31,1.93,1.47,1.09,0.91,0.81,0.66,0.61,0.51],
+      backgroundColor:[COLORS.red,COLORS.pink,COLORS.orange,COLORS.blue,COLORS.yellow,COLORS.teal,COLORS.green,COLORS.violet,COLORS.lime,COLORS.muted],
+      borderRadius:4
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{display:false}}}
+  }
+});
+
+/* ═══ CANCER MORTALITY ═══ */
+new Chart(document.getElementById('cancerMort'), {
+  type:'doughnut',
+  data:{
+    labels:['Lung','Colorectal','Liver','Stomach','Breast','Oesophagus','Pancreas','Prostate','Cervical','Other'],
+    datasets:[{
+      data:[18.7,9.0,7.8,7.7,6.9,5.5,5.0,3.8,3.4,32.2],
+      backgroundColor:[COLORS.red,COLORS.orange,COLORS.yellow,COLORS.lime,COLORS.pink,COLORS.teal,COLORS.violet,COLORS.blue,COLORS.green,'rgba(120,128,160,.4)'],
+      borderWidth:0, hoverOffset:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}
+  }
+});
+
+/* ═══ MENTAL TYPES ═══ */
+new Chart(document.getElementById('mentalTypes'), {
+  type:'bar',
+  data:{
+    labels:['Anxiety Disorders','Depression','ADHD','Bipolar Disorder','Eating Disorders','Schizophrenia','Autism Spectrum','Drug Use Disorders','Alcohol Disorders'],
+    datasets:[{
+      label:'Millions affected',
+      data:[301,280,138,40,14,24,55,39,107],
+      backgroundColor:[COLORS.blue,COLORS.violet,COLORS.pink,COLORS.orange,COLORS.teal,COLORS.red,COLORS.lime,COLORS.yellow,COLORS.green],
+      borderRadius:4
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{display:false}}}
+  }
+});
+
+/* ═══ OBESITY COUNTRY ═══ */
+new Chart(document.getElementById('obesityCountry'), {
+  type:'bar',
+  data:{
+    labels:['USA','UK','Australia','Mexico','Germany','Greece','France','Italy','Japan','India'],
+    datasets:[{
+      label:'% obese (BMI ≥ 30)',
+      data:[36.2,28.0,31.3,28.9,22.3,25.0,21.6,19.9,4.3,3.9],
+      backgroundColor:[COLORS.red,COLORS.orange,COLORS.orange,COLORS.red,COLORS.yellow,COLORS.yellow,COLORS.lime,COLORS.lime,COLORS.green,COLORS.green],
+      borderRadius:5
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'%'}}}
+  }
+});
+
+/* ═══ DIABETES TREND ═══ */
+new Chart(document.getElementById('diabetesTrend'), {
+  type:'line',
+  data:{
+    labels:['1980','1990','2000','2010','2019','2022','2024'],
+    datasets:[{
+      label:'Adults with diabetes (millions)',
+      data:[108,151,194,285,463,537,800],
+      borderColor:COLORS.yellow,
+      backgroundColor:'rgba(255,209,102,.12)',
+      tension:.4, fill:true, borderWidth:2.5,
+      pointBackgroundColor:COLORS.yellow, pointRadius:4
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'}}}
+  }
+});
+
+/* ═══ GDP HEALTH ═══ */
+new Chart(document.getElementById('gdpHealth'), {
+  type:'bar',
+  data:{
+    labels:['USA','Germany','France','Canada','UK','Japan','Australia','Greece','Poland','India'],
+    datasets:[{
+      label:'Health expenditure (% GDP)',
+      data:[18.0,12.8,12.1,12.0,12.0,11.5,10.7,9.7,7.0,3.5],
+      backgroundColor:[COLORS.red,COLORS.blue,COLORS.teal,COLORS.green,COLORS.violet,COLORS.orange,COLORS.lime,COLORS.yellow,COLORS.pink,COLORS.muted],
+      borderRadius:5
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false}}}
+  }
+});
+
+/* ═══ HOSPITAL TYPE ═══ */
+new Chart(document.getElementById('hospitalType'), {
+  type:'doughnut',
+  data:{
+    labels:['Inpatient Services','Outpatient Services','Emergency Services','Cardiovascular','Oncology','Orthopaedics','Neurology','Other'],
+    datasets:[{
+      data:[58.1,22.0,8.0,21.48,12.0,9.0,6.0,22.52],
+      backgroundColor:[COLORS.blue,COLORS.teal,COLORS.red,COLORS.orange,COLORS.pink,COLORS.lime,COLORS.violet,'rgba(120,128,160,.3)'],
+      borderWidth:0, hoverOffset:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}
+  }
+});
+
+/* ═══ GREECE CAUSES ═══ */
+new Chart(document.getElementById('greeceCauses'), {
+  type:'doughnut',
+  data:{
+    labels:['Cardiovascular Disease','Cancer','Respiratory Disease','Neurological (inc. dementia)','Diabetes & Metabolic','External Causes (injuries)','Other'],
+    datasets:[{
+      data:[40,25,8,7,5,4,11],
+      backgroundColor:[COLORS.red,COLORS.orange,COLORS.blue,COLORS.violet,COLORS.yellow,COLORS.teal,'rgba(120,128,160,.3)'],
+      borderWidth:0, hoverOffset:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}}}
+  }
+});
+
+/* ═══ GREECE RADAR ═══ */
+new Chart(document.getElementById('greeceRadar'), {
+  type:'radar',
+  data:{
+    labels:['Life Expectancy','Cancer Survival','CVD Prevention','Mental Health Funding','Nursing Coverage','Antibiotic Stewardship','Hospital Beds','Physician Density'],
+    datasets:[
+      {label:'Greece',data:[72,52,45,38,28,30,58,95],borderColor:COLORS.blue,backgroundColor:'rgba(76,201,240,.1)',borderWidth:2,pointRadius:4},
+      {label:'EU Average',data:[72,62,62,58,72,58,65,65],borderColor:COLORS.green,backgroundColor:'rgba(6,214,160,.06)',borderWidth:2,pointRadius:4,borderDash:[4,4]}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+    scales:{r:{grid:{color:'rgba(255,255,255,.06)'},ticks:{display:false},pointLabels:{font:{size:10}}}}
+  }
+});
+
+/* ═══ EUROPE LIFE EXPECTANCY ═══ */
+new Chart(document.getElementById('europeLE'), {
+  type:'bar',
+  data:{
+    labels:['Switzerland','Spain','Italy','France','Greece','Germany','UK','Poland','Romania','Bulgaria'],
+    datasets:[
+      {label:'Women',data:[85.7,86.2,85.1,85.7,84.5,83.7,83.1,81.0,79.4,77.5],backgroundColor:COLORS.pink,borderRadius:3},
+      {label:'Men',data:[81.8,80.3,80.9,79.8,79.3,78.7,79.5,74.1,72.0,71.4],backgroundColor:COLORS.blue,borderRadius:3}
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,.04)'},min:68,ticks:{callback:v=>v+' yrs'}}}
+  }
+});
+
+/* ═══ EUROPE CVD ═══ */
+new Chart(document.getElementById('europeCVD'), {
+  type:'bar',
+  data:{
+    labels:['Bulgaria','Romania','Ukraine','Russia','Hungary','Poland','Czech Rep.','Slovakia','Greece','Germany','Italy','France','Spain','Switzerland'],
+    datasets:[{
+      label:'CVD deaths per 100,000',
+      data:[980,870,843,830,720,690,640,600,580,360,310,260,250,195],
+      backgroundColor: (ctx)=>{
+        const v = ctx.parsed.y;
+        if(v>700) return COLORS.red;
+        if(v>500) return COLORS.orange;
+        if(v>350) return COLORS.yellow;
+        return COLORS.green;
+      },
+      borderRadius:3
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{display:false}}}
+  }
+});
+
+/* ═══ NAV ACTIVE STATE ═══ */
+const sections = document.querySelectorAll('section[id], div[id="overview"]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(a=>a.classList.remove('active'));
+      const match = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if(match) match.classList.add('active');
+    }
+  });
+},{threshold:.35});
+
+document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
